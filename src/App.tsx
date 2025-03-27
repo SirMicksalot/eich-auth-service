@@ -6,20 +6,36 @@ import supabaseService from './services/supabase';
 function App() {
   // Handle login request
   const LoginHandler: React.FC = () => {
+    const [isLoading, setIsLoading] = React.useState(true);
+    const [error, setError] = React.useState<string | null>(null);
+
     useEffect(() => {
       const initiateLogin = async () => {
         try {
+          setIsLoading(true);
           const { error } = await supabaseService.signInWithGoogle();
           if (error) {
             console.error('Login error:', error);
+            setError(error.message);
           }
         } catch (err) {
           console.error('Login error:', err);
+          setError(err instanceof Error ? err.message : 'An error occurred');
+        } finally {
+          setIsLoading(false);
         }
       };
 
       initiateLogin();
     }, []);
+
+    if (isLoading) {
+      return <div style={{ padding: 20 }}>Initializing login...</div>;
+    }
+
+    if (error) {
+      return <div style={{ padding: 20, color: 'red' }}>Error: {error}</div>;
+    }
 
     return null;
   };
