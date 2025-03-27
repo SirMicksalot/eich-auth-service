@@ -8,7 +8,7 @@ app.use(express.static(path.join(__dirname, 'dist')));
 
 // Handle client-side routing by serving index.html for all routes
 app.get('*', (req, res) => {
-  res.sendFile(join(__dirname, 'dist', 'index.html'));
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
 app.listen(PORT, () => {
