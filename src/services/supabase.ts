@@ -41,6 +41,13 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, authConfig);
  */
 class SupabaseService {
   /**
+   * Get the current session
+   */
+  async getSession() {
+    return await supabase.auth.getSession();
+  }
+
+  /**
    * Sign in with Google OAuth
    */
   async signInWithGoogle() {
@@ -55,14 +62,6 @@ class SupabaseService {
     });
     
     return { data, error };
-  }
-
-  /**
-   * Get current session
-   */
-  async getSession() {
-    const { data: { session }, error } = await supabase.auth.getSession();
-    return { session, error };
   }
 }
 

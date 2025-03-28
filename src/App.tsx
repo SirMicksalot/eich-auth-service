@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import AuthCallback from './pages/AuthCallback';
+import RecentNews from './pages/RecentNews';
+import ProtectedRoute from './components/ProtectedRoute';
 import supabaseService from './services/supabase';
 
 function App() {
@@ -59,6 +61,16 @@ function App() {
         <Route 
           path="/auth/callback" 
           element={<AuthCallback />} 
+        />
+
+        {/* Protected Recent News route */}
+        <Route
+          path="/recent-news"
+          element={
+            <ProtectedRoute>
+              <RecentNews />
+            </ProtectedRoute>
+          }
         />
       </Routes>
     </Router>
