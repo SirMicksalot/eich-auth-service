@@ -6,7 +6,7 @@ const AuthCallback: React.FC = () => {
     const handleCallback = async () => {
       try {
         // Get the session
-        const { session, error } = await supabaseService.getSession();
+        const { data: { session }, error } = await supabaseService.getSession();
         
         if (error) {
           console.error('Auth callback error:', error);
