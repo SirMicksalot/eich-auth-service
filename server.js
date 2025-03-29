@@ -4,23 +4,20 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Define allowed origins
-const allowedOrigins = ['http://localhost:5174'];
-// Add production URL to allowed origins if it exists
-if (process.env.PRODUCTION_CLIENT_URL) {
-  allowedOrigins.push(process.env.PRODUCTION_CLIENT_URL);
-}
-
-// Custom CORS middleware
+// Enable CORS for all routes - more permissive for debugging
 app.use((req, res, next) => {
+  // Log origin for debugging
+  console.log('Request from origin:', req.headers.origin);
+  
   const origin = req.headers.origin;
   
-  // Check if the origin is in our allowed list
-  if (origin && allowedOrigins.includes(origin)) {
+  // Allow origin if it exists
+  if (origin) {
+    // For debugging, we're allowing all origins temporarily
     res.setHeader('Access-Control-Allow-Origin', origin);
     res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   }
   
   // Handle preflight OPTIONS requests
@@ -31,23 +28,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Standard CORS middleware as fallback
-app.use(cors({
-  origin: function(origin, callback) {
-    // Allow requests with no origin (like mobile apps, curl, etc)
-    if (!origin) return callback(null, true);
-    
-    // Check if the origin is allowed
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    
-    callback(new Error('Not allowed by CORS'));
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+// Removing the additional cors middleware that was causing conflicts
 
 // Serve static files from the dist directory
 app.use(express.static(path.join(__dirname, 'dist')));
