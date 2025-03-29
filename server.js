@@ -4,13 +4,19 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// CORS configuration
+// Define allowed origins
+const allowedOrigins = ['http://localhost:5174'];
+// Add production URL to allowed origins if it exists
+if (process.env.PRODUCTION_CLIENT_URL) {
+  allowedOrigins.push(process.env.PRODUCTION_CLIENT_URL);
+}
+
+// Custom CORS middleware
 app.use((req, res, next) => {
-  // Get the origin from the request or default to '*'
   const origin = req.headers.origin;
   
-  // Set the appropriate CORS headers
-  if (origin === 'http://localhost:5174' || origin === process.env.PRODUCTION_CLIENT_URL) {
+  // Check if the origin is in our allowed list
+  if (origin && allowedOrigins.includes(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin);
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -25,14 +31,14 @@ app.use((req, res, next) => {
   next();
 });
 
-// Also keep the standard cors middleware for simpler requests
+// Standard CORS middleware as fallback
 app.use(cors({
   origin: function(origin, callback) {
     // Allow requests with no origin (like mobile apps, curl, etc)
     if (!origin) return callback(null, true);
     
     // Check if the origin is allowed
-    if (origin === 'http://localhost:5174' || origin === process.env.PRODUCTION_CLIENT_URL) {
+    if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
     
