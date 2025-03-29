@@ -33,7 +33,21 @@ app.use((req, res, next) => {
 // Serve static files from the dist directory
 app.use(express.static(path.join(__dirname, 'dist')));
 
-// Handle client-side routing by serving index.html for all routes
+// Handle Supabase authentication callback routes
+app.get('/code-*', (req, res) => {
+  // Special handling for Supabase auth callback URLs
+  // These URLs are used when redirecting back from Supabase auth flows
+  // like magic links, OAuth providers, etc.
+  console.log('Auth callback received:', req.path);
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
+
+// Handle favicon.ico requests
+app.get('/favicon.ico', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'favicon.ico'));
+});
+
+// Handle client-side routing by serving index.html for all other routes
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
